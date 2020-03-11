@@ -1,7 +1,7 @@
 package com.example.currencyapp.dagger.module
 
-import com.example.currencyapp.data.api.ApiClient
-import com.example.currencyapp.data.state.CurrencyRatesRepository
+import com.planner.floorplans.data.api.ApiClient
+import com.planner.floorplans.data.repo.ProjectRepository
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -11,7 +11,7 @@ class RepositoryModule {
 
     @Provides
     @Singleton
-    fun providesCurrencyRatesRepository(api: ApiClient): CurrencyRatesRepository {
-        return CurrencyRatesRepository(api)
+    fun providesProjectRepository(api: ApiClient): ProjectRepository {
+        return ProjectRepository(api)
     }
 }
