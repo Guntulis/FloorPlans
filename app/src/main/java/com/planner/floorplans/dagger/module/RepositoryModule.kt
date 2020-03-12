@@ -1,4 +1,4 @@
-package com.example.currencyapp.dagger.module
+package com.planner.floorplans.dagger.module
 
 import com.planner.floorplans.data.api.ApiClient
 import com.planner.floorplans.data.repo.ProjectRepository

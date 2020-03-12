@@ -1,4 +1,4 @@
-package com.example.currencyapp.dagger.annotation
+package com.planner.floorplans.dagger.annotation
 
 import androidx.lifecycle.ViewModel
 import dagger.MapKey

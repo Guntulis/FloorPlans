@@ -3,7 +3,7 @@ package com.planner.floorplans.data.repo
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.currencyapp.data.api.Resource
+import com.planner.floorplans.data.api.Resource
 import com.planner.floorplans.data.api.ApiClient
 import com.planner.floorplans.data.model.Project
 import io.reactivex.android.schedulers.AndroidSchedulers

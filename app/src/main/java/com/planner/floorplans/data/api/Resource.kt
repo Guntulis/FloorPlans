@@ -1,4 +1,4 @@
-package com.example.currencyapp.data.api
+package com.planner.floorplans.data.api
 
 sealed class Resource<T> {
     class Loading<T> : Resource<T>()

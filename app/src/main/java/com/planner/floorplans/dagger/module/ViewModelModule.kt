@@ -1,10 +1,9 @@
-package com.example.currencyapp.dagger.module
+package com.planner.floorplans.dagger.module
 
 import androidx.lifecycle.ViewModel
-import com.example.currencyapp.dagger.annotation.ViewModelKey
-import com.example.currencyapp.data.AppPreferences
-import com.example.currencyapp.data.state.CurrencyRatesRepository
-import com.example.currencyapp.ui.main.MainViewModel
+import com.planner.floorplans.dagger.annotation.ViewModelKey
+import com.planner.floorplans.data.repo.ProjectRepository
+import com.planner.floorplans.ui.main.MainViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -22,11 +21,10 @@ abstract class ViewModelModule {
     companion object {
         @Provides
         @JvmStatic
-        fun provideMenuViewModel(
-            currencyRatesRepository: CurrencyRatesRepository,
-            appPreferences: AppPreferences
+        fun provideMainViewModel(
+            projectRepository: ProjectRepository
         ): MainViewModel {
-            return MainViewModel(currencyRatesRepository, appPreferences)
+            return MainViewModel(projectRepository)
         }
     }
 }

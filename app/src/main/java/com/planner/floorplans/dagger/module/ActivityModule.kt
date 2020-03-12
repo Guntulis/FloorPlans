@@ -1,7 +1,7 @@
-package com.example.currencyapp.dagger.module
+package com.planner.floorplans.dagger.module
 
-import com.example.currencyapp.ui.MainActivity
-import com.example.currencyapp.ui.MainActivityModule
+import com.planner.floorplans.ui.MainActivity
+import com.planner.floorplans.ui.MainActivityModule
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 

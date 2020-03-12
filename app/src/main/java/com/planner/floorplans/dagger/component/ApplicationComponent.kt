@@ -1,10 +1,10 @@
-package com.example.currencyapp.dagger.component
+package com.planner.floorplans.dagger.component
 
-import com.example.currencyapp.CurrencyRatesApplication
-import com.example.currencyapp.dagger.module.ActivityModule
-import com.example.currencyapp.dagger.module.AppModule
-import com.example.currencyapp.dagger.module.RepositoryModule
-import com.example.currencyapp.dagger.module.ViewModelModule
+import com.planner.floorplans.FloorPlansApplication
+import com.planner.floorplans.dagger.module.ActivityModule
+import com.planner.floorplans.dagger.module.AppModule
+import com.planner.floorplans.dagger.module.RepositoryModule
+import com.planner.floorplans.dagger.module.ViewModelModule
 import dagger.Component
 import dagger.android.AndroidInjectionModule
 import javax.inject.Singleton
@@ -20,5 +20,5 @@ import javax.inject.Singleton
     ]
 )
 interface ApplicationComponent {
-    fun inject(application: CurrencyRatesApplication)
+    fun inject(application: FloorPlansApplication)
 }

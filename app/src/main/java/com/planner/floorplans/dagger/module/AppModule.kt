@@ -1,8 +1,9 @@
-package com.example.currencyapp.dagger.module
+package com.planner.floorplans.dagger.module
 
 import android.app.Application
 import android.content.Context
 import com.planner.floorplans.BuildConfig
+import com.planner.floorplans.data.api.ApiClient
 import dagger.Module
 import dagger.Provides
 import retrofit2.Retrofit
@@ -32,23 +33,5 @@ class AppModule(private val application: Application) {
     @Singleton
     fun providesApi(retrofit: Retrofit): ApiClient {
         return retrofit.create(ApiClient::class.java)
-    }
-
-    @Provides
-    @Singleton
-    fun providesAppPreferences(context: Context): AppPreferences {
-        return AppPreferences(context)
-    }
-
-    @Provides
-    @Singleton
-    fun provideCurrencyRatesAdapter(context: Context): CurrencyRatesAdapter {
-        return CurrencyRatesAdapter(context)
-    }
-
-    @Provides
-    @Singleton
-    fun provideTimer(): Timer {
-        return Timer()
     }
 }
