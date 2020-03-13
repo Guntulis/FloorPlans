@@ -26,12 +26,14 @@ class ProjectRepository(val apiClient: ApiClient) {
         _projectIdListState.value = Resource.Loading()
         apiClient.getFloorPlansHtml()
             .subscribeOn(Schedulers.io())
-            .map { responseBody -> findProjectIds(responseBody.body()?.string() ?: "") }
+            .map { responseBody -> findProjectIds(responseBody.body()?.string()) }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 { projectIds ->
                     projectIds?.let {
                         _projectIdListState.value = Resource.Complete(projectIds)
+                    } ?: run {
+                        _projectIdListState.value = Resource.Empty()
                     }
                 },
                 { error ->
@@ -41,10 +43,12 @@ class ProjectRepository(val apiClient: ApiClient) {
             ).also { _compositeDisposable.add(it) }
     }
 
-    private fun findProjectIds(html: String): List<String> {
-        val regex = Regex("https://planner5d.com/storage/thumbs.600/(.*?)[.jpg]")
-        val matches = regex.findAll(html)
-        return  matches.map { it.groupValues[1] }.toList()
+    private fun findProjectIds(html: String?): List<String>? {
+        return html?.let {
+            val regex = Regex("https://planner5d.com/storage/thumbs.600/(.*?)[.jpg]")
+            val matches = regex.findAll(html)
+            matches.map { it.groupValues[1] }.toList()
+        }
     }
 
     fun loadProjectData(projectId: String?) {
