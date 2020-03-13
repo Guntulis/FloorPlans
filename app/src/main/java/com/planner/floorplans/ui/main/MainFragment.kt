@@ -20,6 +20,11 @@ class MainFragment : DaggerFragment() {
         return MainFragmentBinding.inflate(inflater, container, false).root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModel.loadData()
+    }
+
     companion object {
         fun newInstance(): MainFragment = MainFragment()
     }

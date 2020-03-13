@@ -12,11 +12,40 @@ import io.reactivex.schedulers.Schedulers
 
 class ProjectRepository(val apiClient: ApiClient) {
 
+    private val _projectIdListState = MutableLiveData<Resource<List<String>>>()
+    val projectIdList: LiveData<Resource<List<String>>>
+        get() = _projectIdListState
+
     private val _projectState = MutableLiveData<Resource<Project>>()
     val project: LiveData<Resource<Project>>
         get() = _projectState
 
     private val _compositeDisposable = CompositeDisposable()
+
+    fun loadProjectIDList() {
+        _projectIdListState.value = Resource.Loading()
+        apiClient.getFloorPlansHtml()
+            .subscribeOn(Schedulers.io())
+            .map { responseBody -> findProjectIds(responseBody.body()?.string() ?: "") }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { projectIds ->
+                    projectIds?.let {
+                        _projectIdListState.value = Resource.Complete(projectIds)
+                    }
+                },
+                { error ->
+                    _projectIdListState.value = Resource.Error("Failed to load floor plans")
+                    Log.e(TAG, "Failed to load floor plans", error)
+                }
+            ).also { _compositeDisposable.add(it) }
+    }
+
+    private fun findProjectIds(html: String): List<String> {
+        val regex = Regex("https://planner5d.com/storage/thumbs.600/(.*?)[.jpg]")
+        val matches = regex.findAll(html)
+        return  matches.map { it.groupValues[1] }.toList()
+    }
 
     fun loadProjectData(projectId: String?) {
         if (projectId == null) {
@@ -27,9 +56,9 @@ class ProjectRepository(val apiClient: ApiClient) {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                    { venue ->
-                        venue?.let {
-                            _projectState.value = Resource.Complete(venue)
+                    { project ->
+                        project?.let {
+                            _projectState.value = Resource.Complete(project)
                         }
                     },
                     { error ->
