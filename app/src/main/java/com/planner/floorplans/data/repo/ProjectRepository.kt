@@ -22,7 +22,7 @@ class ProjectRepository(val apiClient: ApiClient) {
 
     private val _compositeDisposable = CompositeDisposable()
 
-    fun loadProjectIDList() {
+    fun loadProjectIds() {
         _projectIdListState.value = Resource.Loading()
         apiClient.getFloorPlansHtml()
             .subscribeOn(Schedulers.io())

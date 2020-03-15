@@ -22,7 +22,7 @@ class MainFragment : DaggerFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.loadData()
+        viewModel.loadProjectIds()
     }
 
     companion object {
