@@ -48,4 +48,8 @@ class MainFragment : DaggerFragment() {
             }
         }
     }
+
+    companion object {
+        fun newInstance(): MainFragment = MainFragment()
+    }
 }

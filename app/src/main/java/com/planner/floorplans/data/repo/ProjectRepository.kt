@@ -30,6 +30,7 @@ class ProjectRepository(val apiClient: ApiClient) {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 { projectIds ->
+                    Log.d(TAG, "Loaded project ids: $projectIds")
                     projectIds?.let {
                         _projectIdListState.value = Resource.Complete(projectIds)
                     } ?: run {

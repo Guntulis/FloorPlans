@@ -15,16 +15,17 @@ import com.planner.floorplans.util.MergeLiveData
 
 class MainViewModel(private val projectRepository: ProjectRepository) : ViewModel() {
 
-    init {
-        projectRepository.loadProjectIds()
-    }
-
     private val _visibleProjectIndex = MutableLiveData<Int>()
     private val _nextProjectIndex = MutableLiveData<Int>()
 
+    init {
+        projectRepository.loadProjectIds()
+        _visibleProjectIndex.value = 0
+    }
+
     private val _visibleProject: MergeLiveData<Resource<List<String>>, Int, Resource<Project>> =
         MergeLiveData(projectRepository.projectIdList, _visibleProjectIndex) { projectIds, index ->
-            _visibleProjectIndex.value?.let { projectIndex->
+            index?.let { projectIndex->
                 when (projectIds) {
                     is Loading -> {
                         Loading<Project>()
