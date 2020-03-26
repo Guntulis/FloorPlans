@@ -11,11 +11,11 @@ data class Project(
 
     @SerializedName("width")
     @Expose
-    var width: Double? = null,
+    var width: Float? = null,
 
     @SerializedName("height")
     @Expose
-    var height: Double? = null,
+    var height: Float? = null,
 
     @SerializedName("currentFloor")
     @Expose

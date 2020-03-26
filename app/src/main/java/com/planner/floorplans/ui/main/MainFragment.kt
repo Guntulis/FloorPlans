@@ -1,5 +1,6 @@
 package com.planner.floorplans.ui.main
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -40,7 +41,11 @@ class MainFragment : DaggerFragment() {
         viewModel.visibleProject.observeIt(this) { visibleProjectState ->
             when (visibleProjectState) {
                 is Complete -> {
-                    currentProjectId.text = visibleProjectState.value.items?.first()?.name
+                    val projectResponse = visibleProjectState.value.items?.first()
+                    currentProjectId.text = projectResponse?.name
+                    floorPlan.setGroundColor(Color.BLUE)
+                    val project = projectResponse?.data
+                    floorPlan.setGroundDimensions(project?.width ?: 0f, project?.height ?: 0f)
                     mainProgressBar.visibility = INVISIBLE
                     errorMessage.visibility = INVISIBLE
                     viewModel.loadNextProject()
