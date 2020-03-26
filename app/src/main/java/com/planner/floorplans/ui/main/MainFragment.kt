@@ -11,9 +11,7 @@ import com.planner.floorplans.data.api.Resource.Loading
 import com.planner.floorplans.databinding.MainFragmentBinding
 import com.planner.floorplans.util.observeIt
 import dagger.android.support.DaggerFragment
-import kotlinx.android.synthetic.main.main_fragment.currentProjectId
-import kotlinx.android.synthetic.main.main_fragment.errorMessage
-import kotlinx.android.synthetic.main.main_fragment.progressBar
+import kotlinx.android.synthetic.main.main_fragment.*
 import javax.inject.Inject
 
 class MainFragment : DaggerFragment() {
@@ -43,17 +41,32 @@ class MainFragment : DaggerFragment() {
             when (visibleProjectState) {
                 is Complete -> {
                     currentProjectId.text = visibleProjectState.value.storage
-                    progressBar.visibility = INVISIBLE
+                    mainProgressBar.visibility = INVISIBLE
                     errorMessage.visibility = INVISIBLE
                     viewModel.loadNextProject()
                 }
                 is Loading -> {
-                    progressBar.visibility = VISIBLE
+                    mainProgressBar.visibility = VISIBLE
                     errorMessage.visibility = INVISIBLE
                 }
                 is Error -> {
-                    progressBar.visibility = INVISIBLE
+                    mainProgressBar.visibility = INVISIBLE
                     errorMessage.visibility = VISIBLE
+                }
+            }
+        }
+
+        viewModel.nextProject.observeIt(this) { nextProjectState ->
+            when (nextProjectState) {
+                is Complete -> {
+                    nextProjectId.text = nextProjectState.value.storage
+                    smallProgressBar.visibility = INVISIBLE
+                }
+                is Loading -> {
+                    smallProgressBar.visibility = VISIBLE
+                }
+                is Error -> {
+                    smallProgressBar.visibility = INVISIBLE
                 }
             }
         }

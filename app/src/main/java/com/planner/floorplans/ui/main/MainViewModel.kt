@@ -21,6 +21,12 @@ class MainViewModel(private val projectRepository: ProjectRepository) : ViewMode
     val projectIdList
         get() = projectRepository.projectIdList
 
+    val visibleProject: LiveData<Resource<Project>>
+        get() = projectRepository.visibleProject
+
+    val nextProject: LiveData<Resource<Project>>
+        get() = projectRepository.nextProject
+
     init {
         projectRepository.loadProjectIds()
     }
@@ -32,10 +38,6 @@ class MainViewModel(private val projectRepository: ProjectRepository) : ViewMode
     fun loadNextProject() {
         projectRepository.loadNextProjectData(nextProjectIndex)
     }
-
-    val visibleProject: LiveData<Resource<Project>>
-        get() = projectRepository.visibleProject
-
 
     companion object {
         val TAG: String = MainViewModel::class.java.simpleName
