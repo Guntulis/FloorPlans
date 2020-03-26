@@ -15,42 +15,26 @@ import com.planner.floorplans.util.MergeLiveData
 
 class MainViewModel(private val projectRepository: ProjectRepository) : ViewModel() {
 
-    private val _visibleProjectIndex = MutableLiveData<Int>()
-    private val _nextProjectIndex = MutableLiveData<Int>()
+    private var visibleProjectIndex = 0
+    private var nextProjectIndex = 1
+
+    val projectIdList
+        get() = projectRepository.projectIdList
 
     init {
         projectRepository.loadProjectIds()
-        _visibleProjectIndex.value = 0
     }
 
-    private val _visibleProject: MergeLiveData<Resource<List<String>>, Int, Resource<Project>> =
-        MergeLiveData(projectRepository.projectIdList, _visibleProjectIndex) { projectIds, index ->
-            index?.let { projectIndex->
-                when (projectIds) {
-                    is Loading -> {
-                        Loading<Project>()
-                    }
-                    is Empty -> {
-                        Empty<Project>()
-                    }
-                    is Complete -> {
-                        if (projectIndex < projectIds.value.size) {
-                            val projectId = projectIds.value[projectIndex]
-                            Log.d(TAG, "Loading project $projectId")
-                            projectRepository.loadProjectData(projectId)
-                            Loading<Project>()
-                        } else {
-                            Error<Project>("Index out of bounds")
-                        }
-                    }
-                    else -> {
-                        Error<Project>("Failed to load project list")
-                    }
-                }
-            } ?: Loading<Project>()
-        }
+    fun loadVisibleProject() {
+        projectRepository.loadVisibleProjectData(visibleProjectIndex)
+    }
+
+    fun loadNextProject() {
+        projectRepository.loadNextProjectData(nextProjectIndex)
+    }
+
     val visibleProject: LiveData<Resource<Project>>
-        get() = _visibleProject
+        get() = projectRepository.visibleProject
 
 
     companion object {

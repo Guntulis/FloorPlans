@@ -3,27 +3,35 @@ package com.planner.floorplans.data.repo
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.planner.floorplans.data.api.Resource
 import com.planner.floorplans.data.api.ApiClient
+import com.planner.floorplans.data.api.Resource
+import com.planner.floorplans.data.api.Resource.Complete
+import com.planner.floorplans.data.api.Resource.Empty
+import com.planner.floorplans.data.api.Resource.Error
+import com.planner.floorplans.data.api.Resource.Loading
 import com.planner.floorplans.data.model.Project
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
-class ProjectRepository(val apiClient: ApiClient) {
+class ProjectRepository(private val apiClient: ApiClient) {
 
     private val _projectIdListState = MutableLiveData<Resource<List<String>>>()
     val projectIdList: LiveData<Resource<List<String>>>
         get() = _projectIdListState
 
-    private val _projectState = MutableLiveData<Resource<Project>>()
-    val project: LiveData<Resource<Project>>
-        get() = _projectState
+    private val _visibleProjectState = MutableLiveData<Resource<Project>>()
+    val visibleProject: LiveData<Resource<Project>>
+        get() = _visibleProjectState
+
+    private val _nextProjectState = MutableLiveData<Resource<Project>>()
+    val nextProject: LiveData<Resource<Project>>
+        get() = _nextProjectState
 
     private val _compositeDisposable = CompositeDisposable()
 
     fun loadProjectIds() {
-        _projectIdListState.value = Resource.Loading()
+        _projectIdListState.value = Loading()
         apiClient.getFloorPlansHtml()
             .subscribeOn(Schedulers.io())
             .map { responseBody -> findProjectIds(responseBody.body()?.string()) }
@@ -32,13 +40,13 @@ class ProjectRepository(val apiClient: ApiClient) {
                 { projectIds ->
                     Log.d(TAG, "Loaded project ids: $projectIds")
                     projectIds?.let {
-                        _projectIdListState.value = Resource.Complete(projectIds)
+                        _projectIdListState.value = Complete(projectIds)
                     } ?: run {
-                        _projectIdListState.value = Resource.Empty()
+                        _projectIdListState.value = Empty()
                     }
                 },
                 { error ->
-                    _projectIdListState.value = Resource.Error("Failed to load floor plans")
+                    _projectIdListState.value = Error("Failed to load floor plans")
                     Log.e(TAG, "Failed to load floor plans", error)
                 }
             ).also { _compositeDisposable.add(it) }
@@ -52,25 +60,53 @@ class ProjectRepository(val apiClient: ApiClient) {
         }
     }
 
-    fun loadProjectData(projectId: String?) {
-        if (projectId == null) {
-            _projectState.value = Resource.Error("Invalid project id")
-        } else {
-            _projectState.value = Resource.Loading()
-            apiClient.getProject(projectId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    { project ->
-                        project?.let {
-                            _projectState.value = Resource.Complete(project)
+    fun loadVisibleProjectData(projectIndex: Int) {
+        when (val idListState = _projectIdListState.value) {
+            is Complete -> {
+                _visibleProjectState.value = Loading()
+                apiClient.getProject(idListState.value[projectIndex])
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                        { project ->
+                            project?.let {
+                                _visibleProjectState.value = Complete(project)
+                            }
+                        },
+                        { error ->
+                            _visibleProjectState.value = Error("Failed to load project")
+                            Log.e(TAG, "Failed to load project", error)
                         }
-                    },
-                    { error ->
-                        _projectState.value = Resource.Error("Failed to load project")
-                        Log.e(TAG, "Failed to load project", error)
-                    }
-                ).also { _compositeDisposable.add(it) }
+                    ).also { _compositeDisposable.add(it) }
+            }
+            else -> {
+                _visibleProjectState.value = Error("Invalid project id list state")
+            }
+        }
+    }
+
+    fun loadNextProjectData(projectIndex: Int) {
+        when (val idListState = _projectIdListState.value) {
+            is Complete -> {
+                _nextProjectState.value = Loading()
+                apiClient.getProject(idListState.value[projectIndex])
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                        { project ->
+                            project?.let {
+                                _nextProjectState.value = Complete(project)
+                            }
+                        },
+                        { error ->
+                            _nextProjectState.value = Error("Failed to load project")
+                            Log.e(TAG, "Failed to load project", error)
+                        }
+                    ).also { _compositeDisposable.add(it) }
+            }
+            else -> {
+                _nextProjectState.value = Error("Invalid project id list state")
+            }
         }
     }
 

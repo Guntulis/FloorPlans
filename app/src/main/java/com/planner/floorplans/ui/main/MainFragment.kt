@@ -30,12 +30,22 @@ class MainFragment : DaggerFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewModel.projectIdList.observeIt(this) { listState ->
+            when (listState) {
+                is Complete -> {
+                    viewModel.loadVisibleProject()
+                }
+            }
+        }
+
         viewModel.visibleProject.observeIt(this) { visibleProjectState ->
             when (visibleProjectState) {
                 is Complete -> {
                     currentProjectId.text = visibleProjectState.value.storage
                     progressBar.visibility = INVISIBLE
                     errorMessage.visibility = INVISIBLE
+                    viewModel.loadNextProject()
                 }
                 is Loading -> {
                     progressBar.visibility = VISIBLE
