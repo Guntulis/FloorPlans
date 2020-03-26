@@ -1,17 +1,10 @@
 package com.planner.floorplans.ui.main
 
-import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.planner.floorplans.data.api.Resource
-import com.planner.floorplans.data.api.Resource.Loading
-import com.planner.floorplans.data.api.Resource.Empty
-import com.planner.floorplans.data.api.Resource.Complete
-import com.planner.floorplans.data.api.Resource.Error
-import com.planner.floorplans.data.model.Project
+import com.planner.floorplans.data.model.ProjectResponse
 import com.planner.floorplans.data.repo.ProjectRepository
-import com.planner.floorplans.util.MergeLiveData
 
 class MainViewModel(private val projectRepository: ProjectRepository) : ViewModel() {
 
@@ -21,10 +14,10 @@ class MainViewModel(private val projectRepository: ProjectRepository) : ViewMode
     val projectIdList
         get() = projectRepository.projectIdList
 
-    val visibleProject: LiveData<Resource<Project>>
+    val visibleProject: LiveData<Resource<ProjectResponse>>
         get() = projectRepository.visibleProject
 
-    val nextProject: LiveData<Resource<Project>>
+    val nextProject: LiveData<Resource<ProjectResponse>>
         get() = projectRepository.nextProject
 
     init {

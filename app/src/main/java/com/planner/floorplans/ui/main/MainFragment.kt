@@ -40,7 +40,7 @@ class MainFragment : DaggerFragment() {
         viewModel.visibleProject.observeIt(this) { visibleProjectState ->
             when (visibleProjectState) {
                 is Complete -> {
-                    currentProjectId.text = visibleProjectState.value.storage
+                    currentProjectId.text = visibleProjectState.value.items?.first()?.name
                     mainProgressBar.visibility = INVISIBLE
                     errorMessage.visibility = INVISIBLE
                     viewModel.loadNextProject()
@@ -59,7 +59,7 @@ class MainFragment : DaggerFragment() {
         viewModel.nextProject.observeIt(this) { nextProjectState ->
             when (nextProjectState) {
                 is Complete -> {
-                    nextProjectId.text = nextProjectState.value.storage
+                    nextProjectId.text = nextProjectState.value.items?.first()?.name
                     smallProgressBar.visibility = INVISIBLE
                 }
                 is Loading -> {

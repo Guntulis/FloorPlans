@@ -9,7 +9,7 @@ import com.planner.floorplans.data.api.Resource.Complete
 import com.planner.floorplans.data.api.Resource.Empty
 import com.planner.floorplans.data.api.Resource.Error
 import com.planner.floorplans.data.api.Resource.Loading
-import com.planner.floorplans.data.model.Project
+import com.planner.floorplans.data.model.ProjectResponse
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -20,12 +20,12 @@ class ProjectRepository(private val apiClient: ApiClient) {
     val projectIdList: LiveData<Resource<List<String>>>
         get() = _projectIdListState
 
-    private val _visibleProjectState = MutableLiveData<Resource<Project>>()
-    val visibleProject: LiveData<Resource<Project>>
+    private val _visibleProjectState = MutableLiveData<Resource<ProjectResponse>>()
+    val visibleProject: LiveData<Resource<ProjectResponse>>
         get() = _visibleProjectState
 
-    private val _nextProjectState = MutableLiveData<Resource<Project>>()
-    val nextProject: LiveData<Resource<Project>>
+    private val _nextProjectState = MutableLiveData<Resource<ProjectResponse>>()
+    val nextProject: LiveData<Resource<ProjectResponse>>
         get() = _nextProjectState
 
     private val _compositeDisposable = CompositeDisposable()
