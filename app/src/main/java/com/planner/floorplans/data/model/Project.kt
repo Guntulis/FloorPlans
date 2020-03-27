@@ -21,6 +21,10 @@ data class Project(
     @Expose
     var currentFloor: String? = null,
 
+    @SerializedName("ground")
+    @Expose
+    var ground: Ground? = null,
+
     @SerializedName("items")
     @Expose
     var floors: List<Floor>? = null

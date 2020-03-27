@@ -21,7 +21,6 @@ class FloorPlanView : View {
         framePaint.color = Color.RED
         framePaint.strokeWidth = 2f
         framePaint.style = Paint.Style.STROKE
-        //groundPaint.isAntiAlias = true
     }
 
     @Suppress("DrawAllocation")

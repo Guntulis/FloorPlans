@@ -2,6 +2,7 @@ package com.planner.floorplans.ui.main
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.INVISIBLE
@@ -43,8 +44,9 @@ class MainFragment : DaggerFragment() {
                 is Complete -> {
                     val projectResponse = visibleProjectState.value.items?.first()
                     currentProjectId.text = projectResponse?.name
-                    floorPlan.setGroundColor(Color.BLUE)
                     val project = projectResponse?.data
+                    val groundColor = parseColor(project?.ground?.color)
+                    floorPlan.setGroundColor(groundColor ?: Color.WHITE)
                     floorPlan.setGroundDimensions(project?.width ?: 0f, project?.height ?: 0f)
                     mainProgressBar.visibility = INVISIBLE
                     errorMessage.visibility = INVISIBLE
@@ -77,7 +79,22 @@ class MainFragment : DaggerFragment() {
         }
     }
 
+    private fun parseColor(color: String?): Int? {
+        return color?.let { value ->
+            return try {
+                Color.parseColor(value)
+            } catch (e: IllegalArgumentException) {
+                Log.e(TAG, "Failed to parse color $color", e)
+                null
+            } catch (e: StringIndexOutOfBoundsException) {
+                Log.e(TAG, "Failed to parse color $color", e)
+                null
+            }
+        }
+    }
+
     companion object {
+        val TAG: String = MainFragment::class.java.simpleName
         fun newInstance(): MainFragment = MainFragment()
     }
 }
