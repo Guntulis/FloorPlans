@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Path
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
@@ -28,6 +29,8 @@ class FloorPlanView : View {
         framePaint.color = Color.RED
         framePaint.strokeWidth = 2f
         framePaint.style = Paint.Style.STROKE
+
+        roomPaint.style = Paint.Style.FILL
     }
 
     @Suppress("DrawAllocation")
@@ -42,12 +45,20 @@ class FloorPlanView : View {
             drawRect(0f, topLeftGroundY, width.toFloat(), topLeftGroundY + groundHeightScaled, groundPaint)
             floorItems.forEach { floorItem ->
                 if (floorItem is Room) {
-                    val topLeftRoomX = floorItem.x ?: 0f
-                    val topLeftRoomY = topLeftGroundY + (floorItem.y ?: 0f)
-                    val bottomRightRoomX = topLeftRoomX + (floorItem.sX ?: 0f)
-                    val bottomRightRoomY = topLeftRoomY + (floorItem.sY ?: 0f)
+                    val topLeftRoomX = (floorItem.x ?: 0f) * scaledBy
+                    val topLeftRoomY = topLeftGroundY + ((floorItem.y ?: 0f) * scaledBy)
+                    /*val bottomRightRoomX = topLeftRoomX + ((floorItem.sX ?: 0f) * scaledBy)
+                    val bottomRightRoomY = topLeftRoomY + ((floorItem.sY ?: 0f) * scaledBy)*/
+                    val path = Path()
+                    path.moveTo(topLeftRoomX, topLeftRoomY)
+                    floorItem.walls?.forEach { wall ->
+                        val wallPoints = wall.points
+                        wallPoints?.let {
+                            path.lineTo(topLeftRoomX + (it[1].x ?: 0f) * scaledBy, topLeftRoomY + (it[1].y ?: 0f) * scaledBy)
+                        }
+                    }
                     roomPaint.color = tryParseColor(floorItem.materials?.floor?.color) ?: Color.WHITE
-                    drawRect(topLeftRoomX, topLeftRoomY, bottomRightRoomX, bottomRightRoomY, roomPaint)
+                    drawPath(path, roomPaint)
                 }
             }
         }

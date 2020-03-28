@@ -3,13 +3,10 @@ package com.planner.floorplans.data.model
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-data class WallPoint(
+data class Window (
 
-    @SerializedName("x")
+    @SerializedName("materials")
     @Expose
-    var x: Float? = null,
+    var materials: List<Materials>? = null
 
-    @SerializedName("y")
-    @Expose
-    var y: Float? = null
-)
+) : FloorItem()
