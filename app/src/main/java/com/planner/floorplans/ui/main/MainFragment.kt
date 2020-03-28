@@ -10,11 +10,13 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import com.planner.floorplans.data.api.Resource.Complete
 import com.planner.floorplans.data.api.Resource.Loading
+import com.planner.floorplans.data.model.Project
 import com.planner.floorplans.databinding.MainFragmentBinding
 import com.planner.floorplans.util.observeIt
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.main_fragment.*
 import javax.inject.Inject
+import kotlin.math.floor
 
 class MainFragment : DaggerFragment() {
 
@@ -45,9 +47,7 @@ class MainFragment : DaggerFragment() {
                     val projectResponse = visibleProjectState.value.items?.first()
                     currentProjectId.text = projectResponse?.name
                     val project = projectResponse?.data
-                    val groundColor = parseColor(project?.ground?.color)
-                    floorPlan.setGroundColor(groundColor ?: Color.WHITE)
-                    floorPlan.setGroundDimensions(project?.width ?: 0f, project?.height ?: 0f)
+                    floorPlan.setProject(project)
                     mainProgressBar.visibility = INVISIBLE
                     errorMessage.visibility = INVISIBLE
                     viewModel.loadNextProject()
@@ -79,19 +79,7 @@ class MainFragment : DaggerFragment() {
         }
     }
 
-    private fun parseColor(color: String?): Int? {
-        return color?.let { value ->
-            return try {
-                Color.parseColor(value)
-            } catch (e: IllegalArgumentException) {
-                Log.e(TAG, "Failed to parse color $color", e)
-                null
-            } catch (e: StringIndexOutOfBoundsException) {
-                Log.e(TAG, "Failed to parse color $color", e)
-                null
-            }
-        }
-    }
+
 
     companion object {
         val TAG: String = MainFragment::class.java.simpleName

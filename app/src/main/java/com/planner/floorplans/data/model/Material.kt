@@ -3,13 +3,13 @@ package com.planner.floorplans.data.model
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-data class Floor(
+data class Material(
 
-    @SerializedName("name")
+    @SerializedName("texture")
     @Expose
-    var name: String? = null,
+    var texture: String? = null,
 
-    @SerializedName("items")
+    @SerializedName("color")
     @Expose
-    var floorItems: List<FloorItem>? = null
+    var color: String? = null
 )
