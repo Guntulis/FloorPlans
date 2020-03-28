@@ -8,6 +8,8 @@ import android.graphics.Path
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
+import androidx.core.content.ContextCompat
+import com.planner.floorplans.R
 import com.planner.floorplans.data.model.FloorItem
 import com.planner.floorplans.data.model.Project
 import com.planner.floorplans.data.model.Room
@@ -19,6 +21,7 @@ class FloorPlanView : View {
     private var groundHeight: Float = 0f
     private val groundPaint = Paint()
     private val roomPaint = Paint()
+    private val wallPaint = Paint()
 
     private var floorItems = listOf<FloorItem>()
 
@@ -29,8 +32,8 @@ class FloorPlanView : View {
         framePaint.color = Color.RED
         framePaint.strokeWidth = 2f
         framePaint.style = Paint.Style.STROKE
-
         roomPaint.style = Paint.Style.FILL
+        wallPaint.color = ContextCompat.getColor(context, R.color.wallColor)
     }
 
     @Suppress("DrawAllocation")
@@ -52,9 +55,15 @@ class FloorPlanView : View {
                     val path = Path()
                     path.moveTo(topLeftRoomX, topLeftRoomY)
                     floorItem.walls?.forEach { wall ->
+                        wallPaint.strokeWidth = wall.width ?: 0f
                         val wallPoints = wall.points
-                        wallPoints?.let {
-                            path.lineTo(topLeftRoomX + (it[1].x ?: 0f) * scaledBy, topLeftRoomY + (it[1].y ?: 0f) * scaledBy)
+                        wallPoints?.let {wallPoint ->
+                            val x0 = topLeftRoomX + (wallPoint[0].x ?: 0f) * scaledBy
+                            val y0 = topLeftRoomY + (wallPoint[0].y ?: 0f) * scaledBy
+                            val x1 = topLeftRoomX + (wallPoint[1].x ?: 0f) * scaledBy
+                            val y1 = topLeftRoomY + (wallPoint[1].y ?: 0f) * scaledBy
+                            path.lineTo(x1, y1)
+                            drawLine(x0, y0, x1, y1, wallPaint)
                         }
                     }
                     roomPaint.color = tryParseColor(floorItem.materials?.floor?.color) ?: Color.WHITE
