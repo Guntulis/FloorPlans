@@ -1,8 +1,6 @@
 package com.planner.floorplans.ui.main
 
-import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.INVISIBLE
@@ -10,13 +8,11 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import com.planner.floorplans.data.api.Resource.Complete
 import com.planner.floorplans.data.api.Resource.Loading
-import com.planner.floorplans.data.model.Project
 import com.planner.floorplans.databinding.MainFragmentBinding
 import com.planner.floorplans.util.observeIt
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.main_fragment.*
 import javax.inject.Inject
-import kotlin.math.floor
 
 class MainFragment : DaggerFragment() {
 
@@ -78,8 +74,6 @@ class MainFragment : DaggerFragment() {
             }
         }
     }
-
-
 
     companion object {
         val TAG: String = MainFragment::class.java.simpleName

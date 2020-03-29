@@ -34,6 +34,7 @@ class FloorPlanView : View {
         framePaint.style = Paint.Style.STROKE
         roomPaint.style = Paint.Style.FILL
         wallPaint.color = ContextCompat.getColor(context, R.color.wallColor)
+        wallPaint.strokeCap = Paint.Cap.SQUARE
     }
 
     @Suppress("DrawAllocation")
@@ -41,7 +42,7 @@ class FloorPlanView : View {
         super.onDraw(canvas)
 
         canvas?.run {
-            drawRect(0f, 0f, width.toFloat(), height.toFloat(), framePaint)
+            //drawRect(0f, 0f, width.toFloat(), height.toFloat(), framePaint)
             val scaledBy = min(width.toFloat(), height.toFloat()) / groundHeight
             val groundHeightScaled = groundHeight * scaledBy
             val topLeftGroundY = (height - groundHeightScaled) / 2
@@ -55,7 +56,7 @@ class FloorPlanView : View {
                     val path = Path()
                     path.moveTo(topLeftRoomX, topLeftRoomY)
                     floorItem.walls?.forEach { wall ->
-                        wallPaint.strokeWidth = wall.width ?: 0f
+                        wallPaint.strokeWidth = (wall.width ?: 0f) * scaledBy
                         val wallPoints = wall.points
                         wallPoints?.let {wallPoint ->
                             val x0 = topLeftRoomX + (wallPoint[0].x ?: 0f) * scaledBy
