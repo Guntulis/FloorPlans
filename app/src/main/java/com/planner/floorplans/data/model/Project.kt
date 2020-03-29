@@ -2,6 +2,7 @@ package com.planner.floorplans.data.model
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import java.math.BigDecimal
 
 data class Project(
 
@@ -11,11 +12,11 @@ data class Project(
 
     @SerializedName("width")
     @Expose
-    var width: Double? = null,
+    var width: BigDecimal? = null,
 
     @SerializedName("height")
     @Expose
-    var height: Double? = null,
+    var height: BigDecimal? = null,
 
     @SerializedName("currentFloor")
     @Expose

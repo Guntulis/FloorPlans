@@ -13,11 +13,12 @@ import com.planner.floorplans.R
 import com.planner.floorplans.data.model.FloorItem
 import com.planner.floorplans.data.model.Project
 import com.planner.floorplans.data.model.Room
+import java.math.BigDecimal
 
 class FloorPlanView : View {
     private val framePaint = Paint()
-    private var groundWidth: Double = 0.0
-    private var groundHeight: Double = 0.0
+    private var groundWidth: BigDecimal = BigDecimal.ZERO
+    private var groundHeight: BigDecimal = BigDecimal.ZERO
     private val groundPaint = Paint()
     private val roomPaint = Paint()
     private val wallPaint = Paint()
@@ -40,58 +41,67 @@ class FloorPlanView : View {
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
 
+        if (groundHeight == BigDecimal.ZERO || groundWidth == BigDecimal.ZERO) {
+            return
+        }
+
         canvas?.run {
             val portraitMode = width <= height
             val scaledBy = if (portraitMode) {
-                width / groundHeight.toFloat()
+                width.toBigDecimal().divide(groundHeight)
             } else {
-                height / groundWidth.toFloat()
+                height.toBigDecimal().divide(groundWidth)
             }
-            val groundWidthScaled = groundWidth.toFloat() * scaledBy
-            val groundHeightScaled = groundHeight.toFloat() * scaledBy
+            val groundWidthScaled = groundWidth * scaledBy
+            val groundHeightScaled = groundHeight * scaledBy
             val topLeftGroundX = if (portraitMode) {
-                0f
+                BigDecimal.ZERO
             } else {
-                (width - groundWidthScaled) / 2
+                (width.toBigDecimal() - groundWidthScaled) / 2.toBigDecimal()
             }
             val topLeftGroundY = if (portraitMode) {
-                (height - groundHeightScaled) / 2
+                (height.toBigDecimal() - groundHeightScaled) / 2.toBigDecimal()
             } else {
-                0f
+                BigDecimal.ZERO
             }
             drawRect(
-                topLeftGroundX,
-                topLeftGroundY,
-                topLeftGroundX + groundWidthScaled,
-                topLeftGroundY + groundHeightScaled,
+                topLeftGroundX.toFloat(),
+                topLeftGroundY.toFloat(),
+                (topLeftGroundX + groundWidthScaled).toFloat(),
+                (topLeftGroundY + groundHeightScaled).toFloat(),
                 groundPaint
             )
             drawFloorItems(this, scaledBy, topLeftGroundX, topLeftGroundY)
         }
     }
 
-    private fun drawFloorItems(canvas: Canvas, scaledBy: Float, topLeftGroundX: Float, topLeftGroundY: Float) {
+    private fun drawFloorItems(
+        canvas: Canvas,
+        scaledBy: BigDecimal,
+        topLeftGroundX: BigDecimal,
+        topLeftGroundY: BigDecimal
+    ) {
         floorItems.forEach { floorItem ->
             if (floorItem is Room) {
                 val firstWallPoint = floorItem.walls?.first()?.points?.first()
-                val firstWallPointX = ((firstWallPoint?.x ?: 0.0) * scaledBy).toFloat()
-                val firstWallPointY = ((firstWallPoint?.y ?: 0.0) * scaledBy).toFloat()
-                val floorX = (floorItem.x ?: 0f) * scaledBy
-                val floorY = (floorItem.y ?: 0f) * scaledBy
+                val firstWallPointX = (firstWallPoint?.x ?: BigDecimal.ZERO) * scaledBy
+                val firstWallPointY = (firstWallPoint?.y ?: BigDecimal.ZERO) * scaledBy
+                val floorX = (floorItem.x ?: BigDecimal.ZERO) * scaledBy
+                val floorY = (floorItem.y ?: BigDecimal.ZERO) * scaledBy
                 val topLeftRoomX = topLeftGroundX + floorX
                 val topLeftRoomY = topLeftGroundY + floorY
                 val path = Path()
-                path.moveTo(topLeftRoomX + firstWallPointX, topLeftRoomY + firstWallPointY)
+                path.moveTo((topLeftRoomX + firstWallPointX).toFloat(), (topLeftRoomY + firstWallPointY).toFloat())
                 floorItem.walls?.forEach { wall ->
-                    wallPaint.strokeWidth = (wall.width ?: 0f) * scaledBy
+                    wallPaint.strokeWidth = ((wall.width ?: BigDecimal.ZERO) * scaledBy).toFloat()
                     val wallPoints = wall.points
                     wallPoints?.let { wallPoint ->
-                        val x0 = topLeftRoomX + ((wallPoint[0].x ?: 0.0) * scaledBy).toFloat()
-                        val y0 = topLeftRoomY + ((wallPoint[0].y ?: 0.0) * scaledBy).toFloat()
-                        val x1 = topLeftRoomX + ((wallPoint[1].x ?: 0.0) * scaledBy).toFloat()
-                        val y1 = topLeftRoomY + ((wallPoint[1].y ?: 0.0) * scaledBy).toFloat()
-                        path.lineTo(x1, y1)
-                        canvas.drawLine(x0, y0, x1, y1, wallPaint)
+                        val x0 = topLeftRoomX + (wallPoint[0].x ?: BigDecimal.ZERO) * scaledBy
+                        val y0 = topLeftRoomY + (wallPoint[0].y ?: BigDecimal.ZERO) * scaledBy
+                        val x1 = topLeftRoomX + (wallPoint[1].x ?: BigDecimal.ZERO) * scaledBy
+                        val y1 = topLeftRoomY + (wallPoint[1].y ?: BigDecimal.ZERO) * scaledBy
+                        path.lineTo(x1.toFloat(), y1.toFloat())
+                        canvas.drawLine(x0.toFloat(), y0.toFloat(), x1.toFloat(), y1.toFloat(), wallPaint)
                     }
                 }
                 roomPaint.color = tryParseColor(floorItem.materials?.floor?.color) ?: Color.WHITE
@@ -100,7 +110,7 @@ class FloorPlanView : View {
         }
     }
 
-    private fun setGroundDimensions(width: Double, height: Double) {
+    private fun setGroundDimensions(width: BigDecimal, height: BigDecimal) {
         groundWidth = width
         groundHeight = height
     }
@@ -112,7 +122,7 @@ class FloorPlanView : View {
     fun setProject(project: Project?) {
         val groundColor = tryParseColor(project?.ground?.color)
         setGroundColor(groundColor ?: Color.WHITE)
-        setGroundDimensions(project?.width ?: 0.0, project?.height ?: 0.0)
+        setGroundDimensions(project?.width ?: BigDecimal.ZERO, project?.height ?: BigDecimal.ZERO)
         val firstFloor = project?.floors?.first()
         floorItems = firstFloor?.floorItems ?: listOf()
         invalidate()

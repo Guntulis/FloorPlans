@@ -2,8 +2,9 @@ package com.planner.floorplans.data.model
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import java.math.BigDecimal
 
- abstract class FloorItem (
+abstract class FloorItem (
 
     @SerializedName("className")
     @Expose
@@ -11,19 +12,19 @@ import com.google.gson.annotations.SerializedName
 
     @SerializedName("x")
     @Expose
-    var x: Float? = null,
+    var x: BigDecimal? = null,
 
     @SerializedName("y")
     @Expose
-    var y: Float? = null,
+    var y: BigDecimal? = null,
 
     @SerializedName("sX")
     @Expose
-    var sX: Float? = null,
+    var sX: Double? = null,
 
     @SerializedName("sY")
     @Expose
-    var sY: Float? = null,
+    var sY: Double? = null,
 
     @SerializedName("items")
     @Expose
