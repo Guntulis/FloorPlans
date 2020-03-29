@@ -22,7 +22,7 @@ class FloorPlanView : View {
     private val groundPaint = Paint()
     private val roomPaint = Paint()
     private val wallPaint = Paint()
-    private var zoom = 1
+    private var zoom = BigDecimal.ONE
 
     private var floorItems = listOf<FloorItem>()
 
@@ -53,18 +53,12 @@ class FloorPlanView : View {
             } else {
                 height.toBigDecimal().divide(groundWidth)
             }
-            val groundWidthScaled = groundWidth * scaledBy
-            val groundHeightScaled = groundHeight * scaledBy
-            val topLeftGroundX = if (portraitMode) {
-                BigDecimal.ZERO
-            } else {
-                (width.toBigDecimal() - groundWidthScaled) / BigDecimal(2)
-            }
-            val topLeftGroundY = if (portraitMode) {
-                (height.toBigDecimal() - groundHeightScaled) / BigDecimal(2)
-            } else {
-                BigDecimal.ZERO
-            }
+            val groundWidthScaled = groundWidth * scaledBy * zoom
+            val groundHeightScaled = groundHeight * scaledBy * zoom
+            val centerX = width.toBigDecimal() / BigDecimal(2)
+            val centerY = height.toBigDecimal() / BigDecimal(2)
+            val topLeftGroundX = centerX - groundWidthScaled / BigDecimal(2)
+            val topLeftGroundY = centerY - groundHeightScaled / BigDecimal(2)
             drawRect(
                 topLeftGroundX.toFloat(),
                 topLeftGroundY.toFloat(),
@@ -85,22 +79,22 @@ class FloorPlanView : View {
         floorItems.forEach { floorItem ->
             if (floorItem is Room) {
                 val firstWallPoint = floorItem.walls?.first()?.points?.first()
-                val firstWallPointX = (firstWallPoint?.x ?: BigDecimal.ZERO) * scaledBy
-                val firstWallPointY = (firstWallPoint?.y ?: BigDecimal.ZERO) * scaledBy
-                val floorX = (floorItem.x ?: BigDecimal.ZERO) * scaledBy
-                val floorY = (floorItem.y ?: BigDecimal.ZERO) * scaledBy
+                val firstWallPointX = (firstWallPoint?.x ?: BigDecimal.ZERO) * scaledBy * zoom
+                val firstWallPointY = (firstWallPoint?.y ?: BigDecimal.ZERO) * scaledBy * zoom
+                val floorX = (floorItem.x ?: BigDecimal.ZERO) * scaledBy * zoom
+                val floorY = (floorItem.y ?: BigDecimal.ZERO) * scaledBy * zoom
                 val topLeftRoomX = topLeftGroundX + floorX
                 val topLeftRoomY = topLeftGroundY + floorY
                 val path = Path()
                 path.moveTo((topLeftRoomX + firstWallPointX).toFloat(), (topLeftRoomY + firstWallPointY).toFloat())
                 floorItem.walls?.forEach { wall ->
-                    wallPaint.strokeWidth = ((wall.width ?: BigDecimal.ZERO) * scaledBy).toFloat()
+                    wallPaint.strokeWidth = ((wall.width ?: BigDecimal.ZERO) * scaledBy * zoom).toFloat()
                     val wallPoints = wall.points
                     wallPoints?.let { wallPoint ->
-                        val x0 = topLeftRoomX + (wallPoint[0].x ?: BigDecimal.ZERO) * scaledBy
-                        val y0 = topLeftRoomY + (wallPoint[0].y ?: BigDecimal.ZERO) * scaledBy
-                        val x1 = topLeftRoomX + (wallPoint[1].x ?: BigDecimal.ZERO) * scaledBy
-                        val y1 = topLeftRoomY + (wallPoint[1].y ?: BigDecimal.ZERO) * scaledBy
+                        val x0 = topLeftRoomX + (wallPoint[0].x ?: BigDecimal.ZERO) * scaledBy * zoom
+                        val y0 = topLeftRoomY + (wallPoint[0].y ?: BigDecimal.ZERO) * scaledBy * zoom
+                        val x1 = topLeftRoomX + (wallPoint[1].x ?: BigDecimal.ZERO) * scaledBy * zoom
+                        val y1 = topLeftRoomY + (wallPoint[1].y ?: BigDecimal.ZERO) * scaledBy * zoom
                         path.lineTo(x1.toFloat(), y1.toFloat())
                         canvas.drawLine(x0.toFloat(), y0.toFloat(), x1.toFloat(), y1.toFloat(), wallPaint)
                     }
@@ -121,7 +115,7 @@ class FloorPlanView : View {
     }
 
     fun setProject(project: Project?, zoom: Int) {
-        this.zoom = zoom
+        this.zoom = zoom.toBigDecimal()
         val groundColor = tryParseColor(project?.ground?.color)
         setGroundColor(groundColor ?: Color.WHITE)
         setGroundDimensions(project?.width ?: BigDecimal.ZERO, project?.height ?: BigDecimal.ZERO)
