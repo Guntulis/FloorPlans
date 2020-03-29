@@ -1,11 +1,10 @@
 package com.planner.floorplans.ui.main
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
+import android.util.Log
+import android.view.*
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
-import android.view.ViewGroup
 import com.planner.floorplans.R
 import com.planner.floorplans.data.api.Resource.Complete
 import com.planner.floorplans.data.api.Resource.Empty
@@ -16,23 +15,33 @@ import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.main_fragment.*
 import javax.inject.Inject
 
-class MainFragment : DaggerFragment() {
+class MainFragment : DaggerFragment(), GestureDetector.OnGestureListener,
+    ScaleGestureDetector.OnScaleGestureListener {
 
     @Inject
     lateinit var viewModel: MainViewModel
+
+    private lateinit var scaleGestureDetector: ScaleGestureDetector
+    private lateinit var gestureDetector: GestureDetector
+    private var scaleFactor = DEFAULT_SCALE_FACTOR
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return MainFragmentBinding.inflate(inflater, container, false).root
+        val view = MainFragmentBinding.inflate(inflater, container, false).root
+        view.setOnTouchListener { _, event ->
+            scaleGestureDetector.onTouchEvent(event)
+            gestureDetector.onTouchEvent(event)
+            true
+        }
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        floorPlan.setOnClickListener {
-            viewModel.displayNextProject()
-        }
+        gestureDetector = GestureDetector(context, this)
+        scaleGestureDetector = ScaleGestureDetector(context, this)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -52,7 +61,7 @@ class MainFragment : DaggerFragment() {
                     val projectResponse = visibleProjectState.value.items?.first()
                     currentProjectId.text = getString(R.string.current_project_name, projectResponse?.name)
                     val project = projectResponse?.data
-                    floorPlan.setProject(project, 2)
+                    floorPlan.setProject(project, scaleFactor)
                     mainProgressBar.visibility = INVISIBLE
                     errorMessage.visibility = INVISIBLE
                     viewModel.loadNextProject()
@@ -89,8 +98,47 @@ class MainFragment : DaggerFragment() {
         }
     }
 
+    override fun onShowPress(e: MotionEvent?) {
+    }
+
+    override fun onSingleTapUp(e: MotionEvent?): Boolean {
+        Log.d(TAG, "onSingleTapUp")
+        viewModel.displayNextProject()
+        return false
+    }
+
+    override fun onDown(e: MotionEvent?): Boolean {
+        return false
+    }
+
+    override fun onFling(e1: MotionEvent?, e2: MotionEvent?, velocityX: Float, velocityY: Float): Boolean {
+        return false
+    }
+
+    override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean {
+        return false
+    }
+
+    override fun onLongPress(e: MotionEvent?) {
+    }
+
+    override fun onScaleBegin(detector: ScaleGestureDetector?): Boolean {
+        return true
+    }
+
+    override fun onScaleEnd(detector: ScaleGestureDetector?) {
+    }
+
+    override fun onScale(detector: ScaleGestureDetector?): Boolean {
+        scaleFactor *= detector?.scaleFactor ?: DEFAULT_SCALE_FACTOR
+        Log.d(TAG, "scaleFactor = $scaleFactor")
+        floorPlan.setScaleFactor(scaleFactor)
+        return true
+    }
+
     companion object {
         val TAG: String = MainFragment::class.java.simpleName
+        const val DEFAULT_SCALE_FACTOR = 1f
         fun newInstance(): MainFragment = MainFragment()
     }
 }

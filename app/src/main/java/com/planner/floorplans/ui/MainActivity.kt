@@ -1,7 +1,7 @@
 package com.planner.floorplans.ui
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.planner.floorplans.R
 import com.planner.floorplans.databinding.MainActivityBinding
