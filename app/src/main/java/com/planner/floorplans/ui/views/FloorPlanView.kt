@@ -49,12 +49,12 @@ class FloorPlanView : View {
         canvas?.run {
             val portraitMode = width <= height
             val scaledBy = if (portraitMode) {
-                width.toBigDecimal().divide(groundHeight)
+                width.toBigDecimal().divide(groundHeight) * zoom
             } else {
-                height.toBigDecimal().divide(groundWidth)
+                height.toBigDecimal().divide(groundWidth) * zoom
             }
-            val groundWidthScaled = groundWidth * scaledBy * zoom
-            val groundHeightScaled = groundHeight * scaledBy * zoom
+            val groundWidthScaled = groundWidth * scaledBy
+            val groundHeightScaled = groundHeight * scaledBy
             val centerX = width.toBigDecimal() / BigDecimal(2)
             val centerY = height.toBigDecimal() / BigDecimal(2)
             val topLeftGroundX = centerX - groundWidthScaled / BigDecimal(2)
@@ -79,22 +79,22 @@ class FloorPlanView : View {
         floorItems.forEach { floorItem ->
             if (floorItem is Room) {
                 val firstWallPoint = floorItem.walls?.first()?.points?.first()
-                val firstWallPointX = (firstWallPoint?.x ?: BigDecimal.ZERO) * scaledBy * zoom
-                val firstWallPointY = (firstWallPoint?.y ?: BigDecimal.ZERO) * scaledBy * zoom
-                val floorX = (floorItem.x ?: BigDecimal.ZERO) * scaledBy * zoom
-                val floorY = (floorItem.y ?: BigDecimal.ZERO) * scaledBy * zoom
+                val firstWallPointX = (firstWallPoint?.x ?: BigDecimal.ZERO) * scaledBy
+                val firstWallPointY = (firstWallPoint?.y ?: BigDecimal.ZERO) * scaledBy
+                val floorX = (floorItem.x ?: BigDecimal.ZERO) * scaledBy
+                val floorY = (floorItem.y ?: BigDecimal.ZERO) * scaledBy
                 val topLeftRoomX = topLeftGroundX + floorX
                 val topLeftRoomY = topLeftGroundY + floorY
                 val path = Path()
                 path.moveTo((topLeftRoomX + firstWallPointX).toFloat(), (topLeftRoomY + firstWallPointY).toFloat())
                 floorItem.walls?.forEach { wall ->
-                    wallPaint.strokeWidth = ((wall.width ?: BigDecimal.ZERO) * scaledBy * zoom).toFloat()
+                    wallPaint.strokeWidth = ((wall.width ?: BigDecimal.ZERO) * scaledBy).toFloat()
                     val wallPoints = wall.points
                     wallPoints?.let { wallPoint ->
-                        val x0 = topLeftRoomX + (wallPoint[0].x ?: BigDecimal.ZERO) * scaledBy * zoom
-                        val y0 = topLeftRoomY + (wallPoint[0].y ?: BigDecimal.ZERO) * scaledBy * zoom
-                        val x1 = topLeftRoomX + (wallPoint[1].x ?: BigDecimal.ZERO) * scaledBy * zoom
-                        val y1 = topLeftRoomY + (wallPoint[1].y ?: BigDecimal.ZERO) * scaledBy * zoom
+                        val x0 = topLeftRoomX + (wallPoint[0].x ?: BigDecimal.ZERO) * scaledBy
+                        val y0 = topLeftRoomY + (wallPoint[0].y ?: BigDecimal.ZERO) * scaledBy
+                        val x1 = topLeftRoomX + (wallPoint[1].x ?: BigDecimal.ZERO) * scaledBy
+                        val y1 = topLeftRoomY + (wallPoint[1].y ?: BigDecimal.ZERO) * scaledBy
                         path.lineTo(x1.toFloat(), y1.toFloat())
                         canvas.drawLine(x0.toFloat(), y0.toFloat(), x1.toFloat(), y1.toFloat(), wallPaint)
                     }
