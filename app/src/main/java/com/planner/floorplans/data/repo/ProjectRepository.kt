@@ -60,7 +60,7 @@ class ProjectRepository(private val apiClient: ApiClient) {
         }
     }
 
-    fun loadVisibleProjectData(projectIndex: Int) {
+    fun loadVisibleProject(projectIndex: Int) {
         when (val idListState = _projectIdListState.value) {
             is Complete -> {
                 _visibleProjectState.value = Loading()

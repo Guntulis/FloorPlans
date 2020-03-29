@@ -1,7 +1,6 @@
 package com.planner.floorplans.ui.main
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.planner.floorplans.data.api.Resource
 import com.planner.floorplans.data.model.ProjectResponse
@@ -27,7 +26,9 @@ class MainViewModel(private val projectRepository: ProjectRepository) : ViewMode
     }
 
     fun loadVisibleProject() {
-        projectRepository.loadVisibleProjectData(visibleProjectIndex)
+        if (projectRepository.visibleProject.value == null) {
+            projectRepository.loadVisibleProject(visibleProjectIndex)
+        }
     }
 
     fun loadNextProject() {
@@ -43,7 +44,7 @@ class MainViewModel(private val projectRepository: ProjectRepository) : ViewMode
     fun startAgain() {
         visibleProjectIndex = 0
         nextProjectIndex = 1
-        projectRepository.loadVisibleProjectData(visibleProjectIndex)
+        projectRepository.loadVisibleProject(visibleProjectIndex)
         projectRepository.loadNextProjectData(nextProjectIndex)
     }
 

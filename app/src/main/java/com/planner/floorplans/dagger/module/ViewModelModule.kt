@@ -20,12 +20,11 @@ abstract class ViewModelModule {
 
     @Module
     companion object {
+
         @Provides
         @Singleton
         @JvmStatic
-        fun provideMainViewModel(
-            projectRepository: ProjectRepository
-        ): MainViewModel {
+        fun provideMainViewModel(projectRepository: ProjectRepository): MainViewModel {
             return MainViewModel(projectRepository)
         }
     }
