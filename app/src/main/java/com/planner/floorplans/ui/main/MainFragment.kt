@@ -6,7 +6,9 @@ import android.view.View
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import com.planner.floorplans.R
 import com.planner.floorplans.data.api.Resource.Complete
+import com.planner.floorplans.data.api.Resource.Empty
 import com.planner.floorplans.data.api.Resource.Loading
 import com.planner.floorplans.databinding.MainFragmentBinding
 import com.planner.floorplans.util.observeIt
@@ -48,9 +50,9 @@ class MainFragment : DaggerFragment() {
             when (visibleProjectState) {
                 is Complete -> {
                     val projectResponse = visibleProjectState.value.items?.first()
-                    currentProjectId.text = projectResponse?.name
+                    currentProjectId.text = getString(R.string.current_project_name, projectResponse?.name)
                     val project = projectResponse?.data
-                    floorPlan.setProject(project)
+                    floorPlan.setProject(project, 2)
                     mainProgressBar.visibility = INVISIBLE
                     errorMessage.visibility = INVISIBLE
                     viewModel.loadNextProject()
@@ -69,13 +71,18 @@ class MainFragment : DaggerFragment() {
         viewModel.nextProject.observeIt(this) { nextProjectState ->
             when (nextProjectState) {
                 is Complete -> {
-                    nextProjectId.text = nextProjectState.value.items?.first()?.name
+                    val nextProjectName = nextProjectState.value.items?.first()?.name
+                    nextProjectId.text = getString(R.string.next_project_name, nextProjectName)
                     smallProgressBar.visibility = INVISIBLE
                 }
                 is Loading -> {
                     smallProgressBar.visibility = VISIBLE
                 }
                 is Error -> {
+                    smallProgressBar.visibility = INVISIBLE
+                }
+                is Empty -> {
+                    nextProjectId.text = getString(R.string.no_more_projects)
                     smallProgressBar.visibility = INVISIBLE
                 }
             }

@@ -22,6 +22,7 @@ class FloorPlanView : View {
     private val groundPaint = Paint()
     private val roomPaint = Paint()
     private val wallPaint = Paint()
+    private var zoom = 1
 
     private var floorItems = listOf<FloorItem>()
 
@@ -57,10 +58,10 @@ class FloorPlanView : View {
             val topLeftGroundX = if (portraitMode) {
                 BigDecimal.ZERO
             } else {
-                (width.toBigDecimal() - groundWidthScaled) / 2.toBigDecimal()
+                (width.toBigDecimal() - groundWidthScaled) / BigDecimal(2)
             }
             val topLeftGroundY = if (portraitMode) {
-                (height.toBigDecimal() - groundHeightScaled) / 2.toBigDecimal()
+                (height.toBigDecimal() - groundHeightScaled) / BigDecimal(2)
             } else {
                 BigDecimal.ZERO
             }
@@ -119,7 +120,8 @@ class FloorPlanView : View {
         groundPaint.color = barBackgroundColor
     }
 
-    fun setProject(project: Project?) {
+    fun setProject(project: Project?, zoom: Int) {
+        this.zoom = zoom
         val groundColor = tryParseColor(project?.ground?.color)
         setGroundColor(groundColor ?: Color.WHITE)
         setGroundDimensions(project?.width ?: BigDecimal.ZERO, project?.height ?: BigDecimal.ZERO)

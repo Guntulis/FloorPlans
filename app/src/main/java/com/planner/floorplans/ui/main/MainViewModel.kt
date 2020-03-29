@@ -37,7 +37,6 @@ class MainViewModel(private val projectRepository: ProjectRepository) : ViewMode
         visibleProjectIndex++
         nextProjectIndex++
         projectRepository.swapVisibleWithNext()
-        //projectRepository.loadNextProjectData(visibleProjectIndex)
     }
 
     companion object {

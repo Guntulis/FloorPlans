@@ -105,7 +105,7 @@ class ProjectRepository(private val apiClient: ApiClient) {
                             }
                         ).also { _compositeDisposable.add(it) }
                 } else {
-                    _nextProjectState.value = Error("Reached end")
+                    _nextProjectState.value = Empty()
                 }
             }
             else -> {

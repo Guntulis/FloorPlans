@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Floor Plans</string>
     <string name="error_loading_data">Error loading data</string>
+    <string name="current_project_name" >Current - %s</string>
+    <string name="next_project_name" >Next - %s</string>
+    <string name="no_more_projects" >No more projects</string>
 </resources>
