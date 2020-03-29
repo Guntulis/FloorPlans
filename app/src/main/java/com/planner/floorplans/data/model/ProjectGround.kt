@@ -3,10 +3,10 @@ package com.planner.floorplans.data.model
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-data class Ground(
+data class ProjectGround(
 
-    @SerializedName("materials")
+    @SerializedName("color")
     @Expose
-    var materials: Materials? = null
+    var color: String? = null
 
 ) : FloorItem()

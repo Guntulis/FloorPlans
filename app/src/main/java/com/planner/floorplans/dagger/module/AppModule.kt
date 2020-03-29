@@ -29,6 +29,7 @@ class AppModule(private val application: Application) {
         val runtimeTypeAdapterFactory = RuntimeTypeAdapterFactory
             .of(FloorItem::class.java, "className")
             .registerSubtype(Room::class.java, "Room")
+            .registerSubtype(Ground::class.java, "Ground")
             .registerSubtype(Pr::class.java, "Pr")
             .registerSubtype(Ns::class.java, "Ns")
             .registerSubtype(Door::class.java, "Door")

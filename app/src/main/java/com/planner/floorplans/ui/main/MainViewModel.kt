@@ -1,6 +1,7 @@
 package com.planner.floorplans.ui.main
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.planner.floorplans.data.api.Resource
 import com.planner.floorplans.data.model.ProjectResponse
@@ -30,6 +31,13 @@ class MainViewModel(private val projectRepository: ProjectRepository) : ViewMode
 
     fun loadNextProject() {
         projectRepository.loadNextProjectData(nextProjectIndex)
+    }
+
+    fun displayNextProject() {
+        visibleProjectIndex++
+        nextProjectIndex++
+        projectRepository.swapVisibleWithNext()
+        //projectRepository.loadNextProjectData(visibleProjectIndex)
     }
 
     companion object {

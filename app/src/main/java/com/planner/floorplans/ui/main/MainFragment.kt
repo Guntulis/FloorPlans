@@ -28,6 +28,13 @@ class MainFragment : DaggerFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        floorPlan.setOnClickListener {
+            viewModel.displayNextProject()
+        }
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
 
         viewModel.projectIdList.observeIt(this) { listState ->
             when (listState) {

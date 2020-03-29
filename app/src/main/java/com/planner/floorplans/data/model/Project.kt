@@ -23,7 +23,7 @@ data class Project(
 
     @SerializedName("ground")
     @Expose
-    var ground: Ground? = null,
+    var ground: ProjectGround? = null,
 
     @SerializedName("items")
     @Expose

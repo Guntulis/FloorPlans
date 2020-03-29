@@ -89,25 +89,34 @@ class ProjectRepository(private val apiClient: ApiClient) {
         when (val idListState = _projectIdListState.value) {
             is Complete -> {
                 _nextProjectState.value = Loading()
-                apiClient.getProject(idListState.value[projectIndex])
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(
-                        { project ->
-                            project?.let {
-                                _nextProjectState.value = Complete(project)
+                if (idListState.value.size > projectIndex) {
+                    apiClient.getProject(idListState.value[projectIndex])
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                            { project ->
+                                project?.let {
+                                    _nextProjectState.value = Complete(project)
+                                }
+                            },
+                            { error ->
+                                _nextProjectState.value = Error("Failed to load project")
+                                Log.e(TAG, "Failed to load project", error)
                             }
-                        },
-                        { error ->
-                            _nextProjectState.value = Error("Failed to load project")
-                            Log.e(TAG, "Failed to load project", error)
-                        }
-                    ).also { _compositeDisposable.add(it) }
+                        ).also { _compositeDisposable.add(it) }
+                } else {
+                    _nextProjectState.value = Error("Reached end")
+                }
             }
             else -> {
                 _nextProjectState.value = Error("Invalid project id list state")
             }
         }
+    }
+
+    fun swapVisibleWithNext() {
+        val nextProject = _nextProjectState.value
+        _visibleProjectState.value = nextProject
     }
 
     companion object {
