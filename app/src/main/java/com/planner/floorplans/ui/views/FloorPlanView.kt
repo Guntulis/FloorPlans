@@ -81,20 +81,20 @@ class FloorPlanView : View {
                 val firstWallPoint = floorItem.walls?.first()?.points?.first()
                 val firstWallPointX = (firstWallPoint?.x ?: BigDecimal.ZERO) * scaledBy
                 val firstWallPointY = (firstWallPoint?.y ?: BigDecimal.ZERO) * scaledBy
-                val floorX = (floorItem.x ?: BigDecimal.ZERO) * scaledBy
-                val floorY = (floorItem.y ?: BigDecimal.ZERO) * scaledBy
+                val floorX = floorItem.x * scaledBy
+                val floorY = floorItem.y * scaledBy
                 val topLeftRoomX = topLeftGroundX + floorX
                 val topLeftRoomY = topLeftGroundY + floorY
                 val path = Path()
                 path.moveTo((topLeftRoomX + firstWallPointX).toFloat(), (topLeftRoomY + firstWallPointY).toFloat())
                 floorItem.walls?.forEach { wall ->
-                    wallPaint.strokeWidth = ((wall.width ?: BigDecimal.ZERO) * scaledBy).toFloat()
+                    wallPaint.strokeWidth = (wall.width * scaledBy).toFloat()
                     val wallPoints = wall.points
                     wallPoints?.let { wallPoint ->
-                        val x0 = topLeftRoomX + (wallPoint[0].x ?: BigDecimal.ZERO) * scaledBy
-                        val y0 = topLeftRoomY + (wallPoint[0].y ?: BigDecimal.ZERO) * scaledBy
-                        val x1 = topLeftRoomX + (wallPoint[1].x ?: BigDecimal.ZERO) * scaledBy
-                        val y1 = topLeftRoomY + (wallPoint[1].y ?: BigDecimal.ZERO) * scaledBy
+                        val x0 = topLeftRoomX + wallPoint[0].x * scaledBy
+                        val y0 = topLeftRoomY + wallPoint[0].y * scaledBy
+                        val x1 = topLeftRoomX + wallPoint[1].x * scaledBy
+                        val y1 = topLeftRoomY + wallPoint[1].y * scaledBy
                         path.lineTo(x1.toFloat(), y1.toFloat())
                         canvas.drawLine(x0.toFloat(), y0.toFloat(), x1.toFloat(), y1.toFloat(), wallPaint)
                     }
@@ -105,21 +105,21 @@ class FloorPlanView : View {
         }
     }
 
-    private fun setGroundDimensions(width: BigDecimal, height: BigDecimal) {
-        groundWidth = width
-        groundHeight = height
+    private fun setGroundDimensions(width: Int, height: Int) {
+        groundWidth = width.toBigDecimal()
+        groundHeight = height.toBigDecimal()
     }
 
     private fun setGroundColor(barBackgroundColor: Int) {
         groundPaint.color = barBackgroundColor
     }
 
-    fun setProject(project: Project?, zoom: Float) {
+    fun setProject(project: Project, zoom: Float) {
         this.zoom = zoom.toBigDecimal()
-        val groundColor = tryParseColor(project?.ground?.color)
+        val groundColor = tryParseColor(project.ground?.color)
         setGroundColor(groundColor ?: Color.WHITE)
-        setGroundDimensions(project?.width ?: BigDecimal.ZERO, project?.height ?: BigDecimal.ZERO)
-        val firstFloor = project?.floors?.first()
+        setGroundDimensions(project.width, project.height)
+        val firstFloor = project.floors?.first()
         floorItems = firstFloor?.floorItems ?: listOf()
         invalidate()
     }

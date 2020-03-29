@@ -12,11 +12,11 @@ data class Project(
 
     @SerializedName("width")
     @Expose
-    var width: BigDecimal? = null,
+    var width: Int = 0,
 
     @SerializedName("height")
     @Expose
-    var height: BigDecimal? = null,
+    var height: Int = 0,
 
     @SerializedName("currentFloor")
     @Expose

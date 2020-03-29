@@ -8,9 +8,9 @@ data class WallPoint(
 
     @SerializedName("x")
     @Expose
-    var x: BigDecimal? = null,
+    var x: BigDecimal = BigDecimal.ZERO,
 
     @SerializedName("y")
     @Expose
-    var y: BigDecimal? = null
+    var y: BigDecimal = BigDecimal.ZERO
 )

@@ -11,6 +11,7 @@ import com.planner.floorplans.R
 import com.planner.floorplans.data.api.Resource.Complete
 import com.planner.floorplans.data.api.Resource.Empty
 import com.planner.floorplans.data.api.Resource.Loading
+import com.planner.floorplans.data.model.ProjectResponse
 import com.planner.floorplans.databinding.MainFragmentBinding
 import com.planner.floorplans.util.observeIt
 import dagger.android.support.DaggerFragment
@@ -77,10 +78,7 @@ class MainFragment : DaggerFragment() {
         viewModel.visibleProject.observeIt(this) { visibleProjectState ->
             when (visibleProjectState) {
                 is Complete -> {
-                    val projectResponse = visibleProjectState.value.items?.first()
-                    currentProjectId.text = getString(R.string.current_project_name, projectResponse?.name)
-                    val project = projectResponse?.data
-                    floorPlan.setProject(project, scaleFactor)
+                    displayProject(visibleProjectState.value)
                     mainProgressBar.visibility = INVISIBLE
                     errorMessage.visibility = INVISIBLE
                     viewModel.loadNextProject()
@@ -114,6 +112,17 @@ class MainFragment : DaggerFragment() {
                     smallProgressBar.visibility = INVISIBLE
                 }
             }
+        }
+    }
+
+    private fun displayProject(projectResponse: ProjectResponse) {
+        val projectResponseItem = projectResponse.items?.first()
+        currentProjectId.text = getString(R.string.current_project_name, projectResponseItem?.name)
+        val project = projectResponseItem?.data
+        project?.let {
+            floorPlan.setProject(it, scaleFactor)
+        } ?: run {
+            Log.e(TAG, "Failed to load project")
         }
     }
 

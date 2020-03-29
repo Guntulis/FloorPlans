@@ -8,7 +8,7 @@ data class Wall(
 
     @SerializedName("w")
     @Expose
-    var width: BigDecimal? = null,
+    var width: BigDecimal = BigDecimal.ZERO,
 
     @SerializedName("items")
     @Expose

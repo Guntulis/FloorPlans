@@ -12,19 +12,11 @@ abstract class FloorItem (
 
     @SerializedName("x")
     @Expose
-    var x: BigDecimal? = null,
+    var x: BigDecimal = BigDecimal.ZERO,
 
     @SerializedName("y")
     @Expose
-    var y: BigDecimal? = null,
-
-    @SerializedName("sX")
-    @Expose
-    var sX: Double? = null,
-
-    @SerializedName("sY")
-    @Expose
-    var sY: Double? = null,
+    var y: BigDecimal = BigDecimal.ZERO,
 
     @SerializedName("items")
     @Expose
