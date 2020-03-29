@@ -16,8 +16,8 @@ import com.planner.floorplans.data.model.Room
 
 class FloorPlanView : View {
     private val framePaint = Paint()
-    private var groundWidth: Float = 0f
-    private var groundHeight: Float = 0f
+    private var groundWidth: Double = 0.0
+    private var groundHeight: Double = 0.0
     private val groundPaint = Paint()
     private val roomPaint = Paint()
     private val wallPaint = Paint()
@@ -43,12 +43,12 @@ class FloorPlanView : View {
         canvas?.run {
             val portraitMode = width <= height
             val scaledBy = if (portraitMode) {
-                width / groundHeight
+                width / groundHeight.toFloat()
             } else {
-                height / groundWidth
+                height / groundWidth.toFloat()
             }
-            val groundWidthScaled = groundWidth * scaledBy
-            val groundHeightScaled = groundHeight * scaledBy
+            val groundWidthScaled = groundWidth.toFloat() * scaledBy
+            val groundHeightScaled = groundHeight.toFloat() * scaledBy
             val topLeftGroundX = if (portraitMode) {
                 0f
             } else {
@@ -70,17 +70,12 @@ class FloorPlanView : View {
         }
     }
 
-    private fun drawFloorItems(
-        canvas: Canvas,
-        scaledBy: Float,
-        topLeftGroundX: Float,
-        topLeftGroundY: Float
-    ) {
+    private fun drawFloorItems(canvas: Canvas, scaledBy: Float, topLeftGroundX: Float, topLeftGroundY: Float) {
         floorItems.forEach { floorItem ->
             if (floorItem is Room) {
                 val firstWallPoint = floorItem.walls?.first()?.points?.first()
-                val firstWallPointX = (firstWallPoint?.x ?: 0f) * scaledBy
-                val firstWallPointY = (firstWallPoint?.y ?: 0f) * scaledBy
+                val firstWallPointX = ((firstWallPoint?.x ?: 0.0) * scaledBy).toFloat()
+                val firstWallPointY = ((firstWallPoint?.y ?: 0.0) * scaledBy).toFloat()
                 val floorX = (floorItem.x ?: 0f) * scaledBy
                 val floorY = (floorItem.y ?: 0f) * scaledBy
                 val topLeftRoomX = topLeftGroundX + floorX
@@ -91,10 +86,10 @@ class FloorPlanView : View {
                     wallPaint.strokeWidth = (wall.width ?: 0f) * scaledBy
                     val wallPoints = wall.points
                     wallPoints?.let { wallPoint ->
-                        val x0 = topLeftRoomX + (wallPoint[0].x ?: 0f) * scaledBy
-                        val y0 = topLeftRoomY + (wallPoint[0].y ?: 0f) * scaledBy
-                        val x1 = topLeftRoomX + (wallPoint[1].x ?: 0f) * scaledBy
-                        val y1 = topLeftRoomY + (wallPoint[1].y ?: 0f) * scaledBy
+                        val x0 = topLeftRoomX + ((wallPoint[0].x ?: 0.0) * scaledBy).toFloat()
+                        val y0 = topLeftRoomY + ((wallPoint[0].y ?: 0.0) * scaledBy).toFloat()
+                        val x1 = topLeftRoomX + ((wallPoint[1].x ?: 0.0) * scaledBy).toFloat()
+                        val y1 = topLeftRoomY + ((wallPoint[1].y ?: 0.0) * scaledBy).toFloat()
                         path.lineTo(x1, y1)
                         canvas.drawLine(x0, y0, x1, y1, wallPaint)
                     }
@@ -105,7 +100,7 @@ class FloorPlanView : View {
         }
     }
 
-    private fun setGroundDimensions(width: Float, height: Float) {
+    private fun setGroundDimensions(width: Double, height: Double) {
         groundWidth = width
         groundHeight = height
     }
@@ -117,7 +112,7 @@ class FloorPlanView : View {
     fun setProject(project: Project?) {
         val groundColor = tryParseColor(project?.ground?.color)
         setGroundColor(groundColor ?: Color.WHITE)
-        setGroundDimensions(project?.width ?: 0f, project?.height ?: 0f)
+        setGroundDimensions(project?.width ?: 0.0, project?.height ?: 0.0)
         val firstFloor = project?.floors?.first()
         floorItems = firstFloor?.floorItems ?: listOf()
         invalidate()

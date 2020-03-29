@@ -7,9 +7,9 @@ data class WallPoint(
 
     @SerializedName("x")
     @Expose
-    var x: Float? = null,
+    var x: Double? = null,
 
     @SerializedName("y")
     @Expose
-    var y: Float? = null
+    var y: Double? = null
 )
