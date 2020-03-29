@@ -68,9 +68,13 @@ class ProjectRepository(private val apiClient: ApiClient) {
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
-                        { project ->
-                            project?.let {
-                                _visibleProjectState.value = Complete(project)
+                        { projectResponse ->
+                            projectResponse?.let {
+                                _visibleProjectState.value = Complete(projectResponse)
+                            } ?: run {
+                                val msg = "Failed to ger project response"
+                                Log.e(TAG, msg)
+                                _visibleProjectState.value = Error(msg)
                             }
                         },
                         { error ->
@@ -85,7 +89,7 @@ class ProjectRepository(private val apiClient: ApiClient) {
         }
     }
 
-    fun loadNextProjectData(projectIndex: Int) {
+    fun loadNextProject(projectIndex: Int) {
         when (val idListState = _projectIdListState.value) {
             is Complete -> {
                 _nextProjectState.value = Loading()
@@ -94,9 +98,13 @@ class ProjectRepository(private val apiClient: ApiClient) {
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
-                            { project ->
-                                project?.let {
-                                    _nextProjectState.value = Complete(project)
+                            { projectResponse ->
+                                projectResponse?.let {
+                                    _nextProjectState.value = Complete(projectResponse)
+                                } ?: run {
+                                    val msg = "Failed to ger project response"
+                                    Log.e(TAG, msg)
+                                    _nextProjectState.value = Error(msg)
                                 }
                             },
                             { error ->

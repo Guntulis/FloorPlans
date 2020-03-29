@@ -32,7 +32,7 @@ class MainViewModel(private val projectRepository: ProjectRepository) : ViewMode
     }
 
     fun loadNextProject() {
-        projectRepository.loadNextProjectData(nextProjectIndex)
+        projectRepository.loadNextProject(nextProjectIndex)
     }
 
     fun displayNextProject() {
@@ -45,7 +45,7 @@ class MainViewModel(private val projectRepository: ProjectRepository) : ViewMode
         visibleProjectIndex = 0
         nextProjectIndex = 1
         projectRepository.loadVisibleProject(visibleProjectIndex)
-        projectRepository.loadNextProjectData(nextProjectIndex)
+        projectRepository.loadNextProject(nextProjectIndex)
     }
 
     companion object {
