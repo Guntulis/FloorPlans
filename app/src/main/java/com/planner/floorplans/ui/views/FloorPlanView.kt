@@ -45,20 +45,32 @@ class FloorPlanView : View {
             //drawRect(0f, 0f, width.toFloat(), height.toFloat(), framePaint)
             val scaledBy = min(width.toFloat(), height.toFloat()) / groundHeight
             val groundHeightScaled = groundHeight * scaledBy
+            val topLeftGroundX = 0f
             val topLeftGroundY = (height - groundHeightScaled) / 2
-            drawRect(0f, topLeftGroundY, width.toFloat(), topLeftGroundY + groundHeightScaled, groundPaint)
+            drawRect(
+                topLeftGroundX,
+                topLeftGroundY,
+                width.toFloat(),
+                topLeftGroundY + groundHeightScaled,
+                groundPaint
+            )
             floorItems.forEach { floorItem ->
                 if (floorItem is Room) {
-                    val topLeftRoomX = (floorItem.x ?: 0f) * scaledBy
-                    val topLeftRoomY = topLeftGroundY + ((floorItem.y ?: 0f) * scaledBy)
+                    val firstWallPoint = floorItem.walls?.first()?.points?.first()
+                    val firstWallPointX = (firstWallPoint?.x ?: 0f) * scaledBy
+                    val firstWallPointY = (firstWallPoint?.y ?: 0f) * scaledBy
+                    val floorX = (floorItem.x ?: 0f) * scaledBy
+                    val floorY = (floorItem.y ?: 0f) * scaledBy
+                    val topLeftRoomX = topLeftGroundX + floorX
+                    val topLeftRoomY = topLeftGroundY + floorY
                     /*val bottomRightRoomX = topLeftRoomX + ((floorItem.sX ?: 0f) * scaledBy)
                     val bottomRightRoomY = topLeftRoomY + ((floorItem.sY ?: 0f) * scaledBy)*/
                     val path = Path()
-                    path.moveTo(topLeftRoomX, topLeftRoomY)
+                    path.moveTo(topLeftRoomX + firstWallPointX, topLeftRoomY + firstWallPointY)
                     floorItem.walls?.forEach { wall ->
                         wallPaint.strokeWidth = (wall.width ?: 0f) * scaledBy
                         val wallPoints = wall.points
-                        wallPoints?.let {wallPoint ->
+                        wallPoints?.let { wallPoint ->
                             val x0 = topLeftRoomX + (wallPoint[0].x ?: 0f) * scaledBy
                             val y0 = topLeftRoomY + (wallPoint[0].y ?: 0f) * scaledBy
                             val x1 = topLeftRoomX + (wallPoint[1].x ?: 0f) * scaledBy
