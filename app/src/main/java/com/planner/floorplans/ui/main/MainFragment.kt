@@ -25,7 +25,6 @@ class MainFragment : DaggerFragment() {
 
     private lateinit var gestureDetector: GestureDetector
     private lateinit var scaleGestureDetector: ScaleGestureDetector
-    private var scaleFactor = DEFAULT_SCALE_FACTOR
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -56,9 +55,9 @@ class MainFragment : DaggerFragment() {
         })
         scaleGestureDetector = ScaleGestureDetector(context, object : SimpleOnScaleGestureListener() {
             override fun onScale(detector: ScaleGestureDetector): Boolean {
-                scaleFactor *= detector.scaleFactor
-                Log.d(TAG, "scaleFactor = $scaleFactor")
-                floorPlan.setScaleFactor(scaleFactor)
+                viewModel.scaleFactor *= detector.scaleFactor
+                Log.d(TAG, "scaleFactor = ${viewModel.scaleFactor}")
+                floorPlan.setScaleFactor(viewModel.scaleFactor)
                 return true
             }
         })
@@ -120,7 +119,7 @@ class MainFragment : DaggerFragment() {
         currentProjectId.text = getString(R.string.current_project_name, projectResponseItem?.name)
         val project = projectResponseItem?.data
         project?.let {
-            floorPlan.setProject(it, scaleFactor)
+            floorPlan.setProject(it, viewModel.scaleFactor)
         } ?: run {
             Log.e(TAG, "Failed to load project")
         }
@@ -128,7 +127,6 @@ class MainFragment : DaggerFragment() {
 
     companion object {
         val TAG: String = MainFragment::class.java.simpleName
-        const val DEFAULT_SCALE_FACTOR = 1f
         fun newInstance(): MainFragment = MainFragment()
     }
 }

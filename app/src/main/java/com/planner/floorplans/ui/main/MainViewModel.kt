@@ -11,6 +11,7 @@ class MainViewModel(private val projectRepository: ProjectRepository) : ViewMode
 
     private var visibleProjectIndex = 0
     private var nextProjectIndex = 1
+    var scaleFactor = DEFAULT_SCALE_FACTOR
 
     val projectIdList
         get() = projectRepository.projectIdList
@@ -47,6 +48,6 @@ class MainViewModel(private val projectRepository: ProjectRepository) : ViewMode
     }
 
     companion object {
-        val TAG: String = MainViewModel::class.java.simpleName
+        const val DEFAULT_SCALE_FACTOR = 1f
     }
 }
