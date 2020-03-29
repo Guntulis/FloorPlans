@@ -8,6 +8,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
+import javax.inject.Singleton
 
 @Module
 abstract class ViewModelModule {
@@ -20,6 +21,7 @@ abstract class ViewModelModule {
     @Module
     companion object {
         @Provides
+        @Singleton
         @JvmStatic
         fun provideMainViewModel(
             projectRepository: ProjectRepository

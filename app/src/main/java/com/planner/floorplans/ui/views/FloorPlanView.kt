@@ -13,7 +13,6 @@ import com.planner.floorplans.R
 import com.planner.floorplans.data.model.FloorItem
 import com.planner.floorplans.data.model.Project
 import com.planner.floorplans.data.model.Room
-import kotlin.math.min
 
 class FloorPlanView : View {
     private val framePaint = Paint()
@@ -42,15 +41,28 @@ class FloorPlanView : View {
         super.onDraw(canvas)
 
         canvas?.run {
-            //drawRect(0f, 0f, width.toFloat(), height.toFloat(), framePaint)
-            val scaledBy = min(width.toFloat(), height.toFloat()) / groundHeight
+            val portraitMode = width <= height
+            val scaledBy = if (portraitMode) {
+                width / groundHeight
+            } else {
+                height / groundWidth
+            }
+            val groundWidthScaled = groundWidth * scaledBy
             val groundHeightScaled = groundHeight * scaledBy
-            val topLeftGroundX = 0f
-            val topLeftGroundY = (height - groundHeightScaled) / 2
+            val topLeftGroundX = if (portraitMode) {
+                0f
+            } else {
+                (width - groundWidthScaled) / 2
+            }
+            val topLeftGroundY = if (portraitMode) {
+                (height - groundHeightScaled) / 2
+            } else {
+                0f
+            }
             drawRect(
                 topLeftGroundX,
                 topLeftGroundY,
-                width.toFloat(),
+                topLeftGroundX + groundWidthScaled,
                 topLeftGroundY + groundHeightScaled,
                 groundPaint
             )
@@ -63,8 +75,6 @@ class FloorPlanView : View {
                     val floorY = (floorItem.y ?: 0f) * scaledBy
                     val topLeftRoomX = topLeftGroundX + floorX
                     val topLeftRoomY = topLeftGroundY + floorY
-                    /*val bottomRightRoomX = topLeftRoomX + ((floorItem.sX ?: 0f) * scaledBy)
-                    val bottomRightRoomY = topLeftRoomY + ((floorItem.sY ?: 0f) * scaledBy)*/
                     val path = Path()
                     path.moveTo(topLeftRoomX + firstWallPointX, topLeftRoomY + firstWallPointY)
                     floorItem.walls?.forEach { wall ->
