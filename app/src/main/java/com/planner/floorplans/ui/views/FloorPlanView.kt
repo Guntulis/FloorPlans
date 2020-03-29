@@ -66,32 +66,41 @@ class FloorPlanView : View {
                 topLeftGroundY + groundHeightScaled,
                 groundPaint
             )
-            floorItems.forEach { floorItem ->
-                if (floorItem is Room) {
-                    val firstWallPoint = floorItem.walls?.first()?.points?.first()
-                    val firstWallPointX = (firstWallPoint?.x ?: 0f) * scaledBy
-                    val firstWallPointY = (firstWallPoint?.y ?: 0f) * scaledBy
-                    val floorX = (floorItem.x ?: 0f) * scaledBy
-                    val floorY = (floorItem.y ?: 0f) * scaledBy
-                    val topLeftRoomX = topLeftGroundX + floorX
-                    val topLeftRoomY = topLeftGroundY + floorY
-                    val path = Path()
-                    path.moveTo(topLeftRoomX + firstWallPointX, topLeftRoomY + firstWallPointY)
-                    floorItem.walls?.forEach { wall ->
-                        wallPaint.strokeWidth = (wall.width ?: 0f) * scaledBy
-                        val wallPoints = wall.points
-                        wallPoints?.let { wallPoint ->
-                            val x0 = topLeftRoomX + (wallPoint[0].x ?: 0f) * scaledBy
-                            val y0 = topLeftRoomY + (wallPoint[0].y ?: 0f) * scaledBy
-                            val x1 = topLeftRoomX + (wallPoint[1].x ?: 0f) * scaledBy
-                            val y1 = topLeftRoomY + (wallPoint[1].y ?: 0f) * scaledBy
-                            path.lineTo(x1, y1)
-                            drawLine(x0, y0, x1, y1, wallPaint)
-                        }
+            drawFloorItems(this, scaledBy, topLeftGroundX, topLeftGroundY)
+        }
+    }
+
+    private fun drawFloorItems(
+        canvas: Canvas,
+        scaledBy: Float,
+        topLeftGroundX: Float,
+        topLeftGroundY: Float
+    ) {
+        floorItems.forEach { floorItem ->
+            if (floorItem is Room) {
+                val firstWallPoint = floorItem.walls?.first()?.points?.first()
+                val firstWallPointX = (firstWallPoint?.x ?: 0f) * scaledBy
+                val firstWallPointY = (firstWallPoint?.y ?: 0f) * scaledBy
+                val floorX = (floorItem.x ?: 0f) * scaledBy
+                val floorY = (floorItem.y ?: 0f) * scaledBy
+                val topLeftRoomX = topLeftGroundX + floorX
+                val topLeftRoomY = topLeftGroundY + floorY
+                val path = Path()
+                path.moveTo(topLeftRoomX + firstWallPointX, topLeftRoomY + firstWallPointY)
+                floorItem.walls?.forEach { wall ->
+                    wallPaint.strokeWidth = (wall.width ?: 0f) * scaledBy
+                    val wallPoints = wall.points
+                    wallPoints?.let { wallPoint ->
+                        val x0 = topLeftRoomX + (wallPoint[0].x ?: 0f) * scaledBy
+                        val y0 = topLeftRoomY + (wallPoint[0].y ?: 0f) * scaledBy
+                        val x1 = topLeftRoomX + (wallPoint[1].x ?: 0f) * scaledBy
+                        val y1 = topLeftRoomY + (wallPoint[1].y ?: 0f) * scaledBy
+                        path.lineTo(x1, y1)
+                        canvas.drawLine(x0, y0, x1, y1, wallPaint)
                     }
-                    roomPaint.color = tryParseColor(floorItem.materials?.floor?.color) ?: Color.WHITE
-                    drawPath(path, roomPaint)
                 }
+                roomPaint.color = tryParseColor(floorItem.materials?.floor?.color) ?: Color.WHITE
+                canvas.drawPath(path, roomPaint)
             }
         }
     }
