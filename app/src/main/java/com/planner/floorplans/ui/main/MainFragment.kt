@@ -3,6 +3,8 @@ package com.planner.floorplans.ui.main
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.view.GestureDetector.SimpleOnGestureListener
+import android.view.ScaleGestureDetector.SimpleOnScaleGestureListener
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import com.planner.floorplans.R
@@ -15,8 +17,7 @@ import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.main_fragment.*
 import javax.inject.Inject
 
-class MainFragment : DaggerFragment(), GestureDetector.OnGestureListener,
-    ScaleGestureDetector.OnScaleGestureListener {
+class MainFragment : DaggerFragment() {
 
     @Inject
     lateinit var viewModel: MainViewModel
@@ -40,8 +41,26 @@ class MainFragment : DaggerFragment(), GestureDetector.OnGestureListener,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        gestureDetector = GestureDetector(context, this)
-        scaleGestureDetector = ScaleGestureDetector(context, this)
+        gestureDetector = GestureDetector(context, object : SimpleOnGestureListener() {
+            override fun onSingleTapUp(e: MotionEvent?): Boolean {
+                Log.d(TAG, "onSingleTapUp")
+                viewModel.displayNextProject()
+                return false
+            }
+
+            override fun onLongPress(e: MotionEvent?) {
+                Log.d(TAG, "onLongPress")
+                viewModel.startAgain()
+            }
+        })
+        scaleGestureDetector = ScaleGestureDetector(context, object : SimpleOnScaleGestureListener() {
+            override fun onScale(detector: ScaleGestureDetector): Boolean {
+                scaleFactor *= detector.scaleFactor
+                Log.d(TAG, "scaleFactor = $scaleFactor")
+                floorPlan.setScaleFactor(scaleFactor)
+                return true
+            }
+        })
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -96,46 +115,6 @@ class MainFragment : DaggerFragment(), GestureDetector.OnGestureListener,
                 }
             }
         }
-    }
-
-    override fun onShowPress(e: MotionEvent?) {
-    }
-
-    override fun onSingleTapUp(e: MotionEvent?): Boolean {
-        Log.d(TAG, "onSingleTapUp")
-        viewModel.displayNextProject()
-        return false
-    }
-
-    override fun onDown(e: MotionEvent?): Boolean {
-        return false
-    }
-
-    override fun onFling(e1: MotionEvent?, e2: MotionEvent?, velocityX: Float, velocityY: Float): Boolean {
-        return false
-    }
-
-    override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean {
-        return false
-    }
-
-    override fun onLongPress(e: MotionEvent?) {
-        Log.d(TAG, "onLongPress")
-        viewModel.startAgain()
-    }
-
-    override fun onScaleBegin(detector: ScaleGestureDetector?): Boolean {
-        return true
-    }
-
-    override fun onScaleEnd(detector: ScaleGestureDetector?) {
-    }
-
-    override fun onScale(detector: ScaleGestureDetector?): Boolean {
-        scaleFactor *= detector?.scaleFactor ?: DEFAULT_SCALE_FACTOR
-        Log.d(TAG, "scaleFactor = $scaleFactor")
-        floorPlan.setScaleFactor(scaleFactor)
-        return true
     }
 
     companion object {
