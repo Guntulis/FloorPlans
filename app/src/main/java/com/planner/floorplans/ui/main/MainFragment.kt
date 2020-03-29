@@ -21,8 +21,8 @@ class MainFragment : DaggerFragment(), GestureDetector.OnGestureListener,
     @Inject
     lateinit var viewModel: MainViewModel
 
-    private lateinit var scaleGestureDetector: ScaleGestureDetector
     private lateinit var gestureDetector: GestureDetector
+    private lateinit var scaleGestureDetector: ScaleGestureDetector
     private var scaleFactor = DEFAULT_SCALE_FACTOR
 
     override fun onCreateView(
@@ -31,8 +31,8 @@ class MainFragment : DaggerFragment(), GestureDetector.OnGestureListener,
     ): View {
         val view = MainFragmentBinding.inflate(inflater, container, false).root
         view.setOnTouchListener { _, event ->
-            scaleGestureDetector.onTouchEvent(event)
             gestureDetector.onTouchEvent(event)
+            scaleGestureDetector.onTouchEvent(event)
             true
         }
         return view
@@ -120,6 +120,8 @@ class MainFragment : DaggerFragment(), GestureDetector.OnGestureListener,
     }
 
     override fun onLongPress(e: MotionEvent?) {
+        Log.d(TAG, "onLongPress")
+        viewModel.startAgain()
     }
 
     override fun onScaleBegin(detector: ScaleGestureDetector?): Boolean {

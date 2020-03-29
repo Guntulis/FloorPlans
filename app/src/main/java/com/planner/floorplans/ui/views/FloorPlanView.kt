@@ -7,8 +7,6 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.util.AttributeSet
 import android.util.Log
-import android.view.MotionEvent
-import android.view.ScaleGestureDetector
 import android.view.View
 import androidx.core.content.ContextCompat
 import com.planner.floorplans.R
@@ -17,7 +15,7 @@ import com.planner.floorplans.data.model.Project
 import com.planner.floorplans.data.model.Room
 import java.math.BigDecimal
 
-class FloorPlanView : View/*, ScaleGestureDetector.OnScaleGestureListener*/ {
+class FloorPlanView : View {
     private val framePaint = Paint()
     private var groundWidth: BigDecimal = BigDecimal.ZERO
     private var groundHeight: BigDecimal = BigDecimal.ZERO
@@ -148,45 +146,4 @@ class FloorPlanView : View/*, ScaleGestureDetector.OnScaleGestureListener*/ {
     companion object {
         val TAG: String = FloorPlanView::class.java.simpleName
     }
-
-    /*override fun onScaleBegin(detector: ScaleGestureDetector?): Boolean {
-        return false
-    }
-
-    override fun onScaleEnd(detector: ScaleGestureDetector?) {
-    }
-
-    override fun onScale(detector: ScaleGestureDetector): Boolean {
-        zoom *= detector.scaleFactor.toBigDecimal()
-        Log.d(TAG, "zoom = $zoom")
-        invalidate()
-        return false
-    }*/
-
-    /*private val onScaleGestureListener = object : ScaleGestureDetector.OnScaleGestureListener {
-
-        override fun onScale(detector: ScaleGestureDetector): Boolean {
-            zoom *= detector.scaleFactor.toBigDecimal()
-            Log.d(TAG, "zoom = $zoom")
-            return false
-        }
-
-        override fun onScaleBegin(detector: ScaleGestureDetector?): Boolean {
-            Log.d(TAG, "scale begin")
-            return false
-        }
-
-        override fun onScaleEnd(detector: ScaleGestureDetector?) {
-            Log.d(TAG, "scale end")
-        }
-    }
-
-    private val scaleGestureDetector: ScaleGestureDetector by lazy {
-        ScaleGestureDetector(context, onScaleGestureListener)
-    }
-
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-        scaleGestureDetector.onTouchEvent(event)
-        return super.onTouchEvent(event)
-    }*/
 }

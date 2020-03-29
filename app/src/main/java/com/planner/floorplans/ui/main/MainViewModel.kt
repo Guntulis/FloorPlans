@@ -39,6 +39,13 @@ class MainViewModel(private val projectRepository: ProjectRepository) : ViewMode
         projectRepository.swapVisibleWithNext()
     }
 
+    fun startAgain() {
+        visibleProjectIndex = 0
+        nextProjectIndex = 1
+        projectRepository.loadVisibleProjectData(visibleProjectIndex)
+        projectRepository.loadNextProjectData(nextProjectIndex)
+    }
+
     companion object {
         val TAG: String = MainViewModel::class.java.simpleName
     }
